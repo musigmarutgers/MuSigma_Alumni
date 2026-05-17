@@ -1,6 +1,6 @@
 # PMD Mu Sigma Alumni Association Website
 
-Public alumni association website built with Next.js App Router, TypeScript, Stripe Checkout, and Redis/KV-backed donation tracking for Vercel.
+Public alumni association website built with Next.js App Router, TypeScript, Stripe Checkout, and Supabase-backed donation tracking for Vercel.
 
 ## Local Setup
 
@@ -30,9 +30,21 @@ Required services:
 
 - Stripe secret key and webhook signing secret
 - Stripe recurring price IDs, if using pre-created prices for monthly tiers
-- Upstash Redis or a Vercel Marketplace Redis-compatible KV store
+- Supabase project URL, publishable key, and secret key
 
-Never expose Stripe secret keys or Redis tokens with `NEXT_PUBLIC_`.
+Never expose Stripe secret keys or Supabase secret keys with `NEXT_PUBLIC_`.
+
+## Supabase Setup
+
+Run the SQL in `supabase/schema.sql` from the Supabase SQL Editor before testing live donation tracking.
+
+For the current Supabase dashboard:
+
+- `Project URL` should look like `https://YOUR_PROJECT_REF.supabase.co`
+- `Publishable key` goes in `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `Secret key` goes in `SUPABASE_SECRET_KEY`
+
+The app uses the secret key only from server-side API routes. Public visitors never receive it.
 
 ## Stripe Testing
 
@@ -51,6 +63,15 @@ Deploy to Vercel, set the same environment variables in the Vercel project setti
 ```text
 https://YOUR_DOMAIN/api/stripe-webhook
 ```
+
+Subscribe the Stripe endpoint to:
+
+- `checkout.session.completed`
+- `invoice.payment_succeeded`
+- `charge.refunded`
+- `refund.created`
+- `payment_intent.payment_failed`
+- `customer.subscription.deleted`
 
 ## Content Safety
 

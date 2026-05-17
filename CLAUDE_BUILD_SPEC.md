@@ -11,7 +11,7 @@ This is a full rebuild from the current plain HTML/CSS/JS prototype into a Next.
 - Use Next.js App Router with TypeScript.
 - Target Vercel hosting.
 - Use public pages only. Do not add login, authentication, member-only routes, private feeds, or protected alumni data in v1.
-- Add live donation tracking through server-side API routes, Stripe Checkout, Stripe webhooks, and KV/Redis storage.
+- Add live donation tracking through server-side API routes, Stripe Checkout, Stripe webhooks, and Supabase storage.
 - Use polished sample content across the site, but mark all real-world values with clear TODO labels.
 - Do not expose donor emails, customer IDs, billing details, exact donation amounts, private donor names, or Stripe internals in public API responses.
 - Do not show donor tiers publicly. The donor wall should show opt-in donor display names only.
@@ -24,10 +24,10 @@ This is a full rebuild from the current plain HTML/CSS/JS prototype into a Next.
 - React components
 - Plain CSS via `app/globals.css` and component class names
 - Stripe Node SDK
-- Upstash Redis or Vercel Marketplace Redis-compatible KV storage
+- Supabase database
 - Vercel deployment
 
-Avoid adding Tailwind, shadcn/ui, authentication libraries, Prisma, a SQL database, or a CMS in this version. The goal is a clean, maintainable Vercel app with a small donation backend, not a full platform.
+Avoid adding Tailwind, shadcn/ui, authentication libraries, Prisma, or a CMS in this version. The goal is a clean, maintainable Vercel app with a small donation backend, not a full platform.
 
 ## Target Repository Shape
 
@@ -87,6 +87,8 @@ public/
   hero-slide-4.jpeg
   hero-slide-5.jpeg
   leader-placeholder.svg
+supabase/
+  schema.sql
 .env.example
 next.config.ts
 package.json
@@ -118,7 +120,7 @@ Use the latest stable Next.js and React versions available when implementing. Ke
 - `react-dom`
 - `typescript`
 - `stripe`
-- Redis/KV client package, preferably `@upstash/redis` if using Upstash Redis
+- `@supabase/supabase-js`
 
 ## Environment Variables
 
@@ -138,16 +140,17 @@ STRIPE_PRICE_MONTHLY_25=price_TODO
 STRIPE_PRICE_MONTHLY_50=price_TODO
 STRIPE_PRICE_MONTHLY_100=price_TODO
 
-# Redis / KV
-UPSTASH_REDIS_REST_URL=https://TODO.upstash.io
-UPSTASH_REDIS_REST_TOKEN=TODO
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_TODO
+SUPABASE_SECRET_KEY=sb_secret_TODO
 
 # Public site settings
 NEXT_PUBLIC_SITE_NAME=PMD Mu Sigma Alumni Association
 NEXT_PUBLIC_ANNUAL_DONATION_GOAL_CENTS=2500000
 ```
 
-Do not prefix Stripe secret keys or Redis tokens with `NEXT_PUBLIC_`.
+Do not prefix Stripe secret keys or Supabase secret keys with `NEXT_PUBLIC_`.
 
 ## Site Navigation
 
@@ -431,11 +434,12 @@ Behavior:
 - Read the raw request body.
 - Verify the Stripe signature with `STRIPE_WEBHOOK_SECRET`.
 - Ignore events that fail verification.
-- Store processed event IDs in Redis/KV so duplicate webhook deliveries are not counted twice.
+- Store processed event IDs in Supabase so duplicate webhook deliveries are not counted twice.
 - Handle at minimum:
   - `checkout.session.completed`
   - `invoice.payment_succeeded`
   - `charge.refunded`
+  - `refund.created`
   - `payment_intent.payment_failed` as a no-op/loggable event
   - `customer.subscription.deleted` as a no-op/loggable event unless needed later
 - On successful one-time or recurring payment, update:
@@ -468,22 +472,21 @@ Rules:
 
 - Public-safe response only.
 - Do not include emails, exact donor amounts, tiers, Stripe IDs, customer IDs, or billing details.
-- If Redis/KV is unavailable, return a safe fallback with sample/TODO values and a visible non-crashing UI state.
+- If Supabase is unavailable, return a safe fallback with sample/TODO values and a visible non-crashing UI state.
 
-## Redis / KV Key Design
+## Supabase Donation Storage
 
-Use simple, explicit keys:
+Use simple, explicit tables and a summary view:
 
 ```text
-donations:totalRaisedCents
-donations:annualGoalCents
-donations:monthlyDonorCount
-donations:lastUpdated
-donations:donorWall
-stripe:processedEvents
+donations
+donation_settings
+stripe_processed_events
+stripe_refunds
+donation_summary
 ```
 
-`donations:donorWall` should store only opt-in display names and minimal metadata needed for ordering. Do not store emails or full Stripe objects.
+The donor wall should read only opt-in display names and minimal metadata needed for ordering. Do not store emails or full Stripe objects in public responses.
 
 ## Frontend Donation Components
 
@@ -605,9 +608,8 @@ The build is complete when:
 - The repo runs as a Next.js App Router TypeScript project.
 - All planned public pages exist and look intentionally designed.
 - Donation checkout is initiated server-side.
-- Stripe webhooks update Redis/KV donation summary data.
+- Stripe webhooks update Supabase donation summary data.
 - The public donation summary and donor wall obey privacy rules.
 - There is no authentication or protected route logic.
 - The project builds successfully for Vercel.
 - README and `.env.example` make local setup understandable.
-

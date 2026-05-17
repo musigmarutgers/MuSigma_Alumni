@@ -5,6 +5,7 @@ import {
   markProcessedEvent,
   recordDonationPayment,
   recordMonthlyDonor,
+  recordRefund,
   subtractRefundedAmount
 } from "@/lib/donation-store";
 import { getStripe } from "@/lib/stripe";
@@ -67,7 +68,20 @@ async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
 
     case "charge.refunded": {
       const charge = event.data.object as Stripe.Charge;
-      await subtractRefundedAmount(charge.amount_refunded ?? 0);
+      const refunds = charge.refunds?.data ?? [];
+
+      if (refunds.length > 0) {
+        await Promise.all(refunds.map((refund) => recordRefund(refund.id, refund.amount ?? 0)));
+      } else {
+        await subtractRefundedAmount(charge.amount_refunded ?? 0);
+      }
+
+      return;
+    }
+
+    case "refund.created": {
+      const refund = event.data.object as Stripe.Refund;
+      await recordRefund(refund.id, refund.amount ?? 0);
       return;
     }
 

@@ -44,7 +44,7 @@ export function DonationProgress({ compact = false }: DonationProgressProps) {
       <section className="progress-panel">
         <p className="eyebrow">Impact Fund tracker</p>
         <h3>Tracker setup pending</h3>
-        <p>{error} Add Stripe and Redis environment variables to enable live tracking.</p>
+        <p>{error} Add Stripe and Supabase environment variables to enable live tracking.</p>
       </section>
     );
   }

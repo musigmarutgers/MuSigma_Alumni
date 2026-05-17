@@ -1,154 +1,243 @@
-import { Redis } from "@upstash/redis";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { DonationSummaryResponse } from "@/lib/donations";
 
-const totalRaisedKey = "donations:totalRaisedCents";
-const annualGoalKey = "donations:annualGoalCents";
-const monthlyDonorCountKey = "donations:monthlyDonorCount";
-const lastUpdatedKey = "donations:lastUpdated";
-const donorWallKey = "donations:donorWall";
-const processedEventsKey = "stripe:processedEvents";
+const fallbackTotalRaisedCents = 1850000;
+const fallbackMonthlyDonorCount = 42;
+const fallbackAnnualGoalCents = 2500000;
 
-let redisClient: Redis | null | undefined;
+let supabaseClient: SupabaseClient | null | undefined;
 
-function getRedis(): Redis | null {
-  if (redisClient !== undefined) {
-    return redisClient;
+type DonationSummaryRow = {
+  total_raised_cents: number | string | null;
+  monthly_donor_count: number | string | null;
+  last_updated: string | null;
+};
+
+type DonorRow = {
+  donor_display_name: string | null;
+};
+
+type DonationSettingRow = {
+  value: string | null;
+};
+
+function configured(value: string | undefined): value is string {
+  return Boolean(value && !value.includes("TODO") && !value.includes("your_"));
+}
+
+function getSupabase(): SupabaseClient | null {
+  if (supabaseClient !== undefined) {
+    return supabaseClient;
   }
 
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!url || !token || url.includes("TODO") || token.includes("TODO")) {
-    redisClient = null;
-    return redisClient;
+  if (!configured(url) || !configured(secretKey)) {
+    supabaseClient = null;
+    return supabaseClient;
   }
 
-  redisClient = new Redis({ url, token });
-  return redisClient;
+  supabaseClient = createClient(url, secretKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
+
+  return supabaseClient;
+}
+
+function parseCents(value: string | number | null | undefined, fallback: number): number {
+  const parsed = typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) ? Number(parsed) : fallback;
 }
 
 function getAnnualGoalFromEnv(): number {
-  const value = Number.parseInt(process.env.NEXT_PUBLIC_ANNUAL_DONATION_GOAL_CENTS ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : 2500000;
+  return parseCents(process.env.NEXT_PUBLIC_ANNUAL_DONATION_GOAL_CENTS, fallbackAnnualGoalCents);
 }
 
-async function getNumber(redis: Redis, key: string, fallback: number): Promise<number> {
-  const value = await redis.get<number | string>(key);
-  const parsed = typeof value === "string" ? Number.parseInt(value, 10) : value;
-  return Number.isFinite(parsed) ? Number(parsed) : fallback;
+async function getAnnualGoalCents(supabase: SupabaseClient): Promise<number> {
+  const fallback = getAnnualGoalFromEnv();
+  const { data, error } = await supabase
+    .from("donation_settings")
+    .select("value")
+    .eq("key", "annual_goal_cents")
+    .maybeSingle<DonationSettingRow>();
+
+  if (error) {
+    throw error;
+  }
+
+  return parseCents(data?.value, fallback);
 }
 
 export async function getDonationSummary(): Promise<DonationSummaryResponse> {
   const annualGoalCents = getAnnualGoalFromEnv();
-  const redis = getRedis();
+  const supabase = getSupabase();
 
-  if (!redis) {
+  if (!supabase) {
     return {
-      totalRaisedCents: 1850000,
+      totalRaisedCents: fallbackTotalRaisedCents,
       annualGoalCents,
-      monthlyDonorCount: 42,
+      monthlyDonorCount: fallbackMonthlyDonorCount,
       lastUpdated: null,
       donors: []
     };
   }
 
-  const [totalRaisedCents, storedAnnualGoalCents, monthlyDonorCount, lastUpdated, donorEntries] = await Promise.all([
-    getNumber(redis, totalRaisedKey, 0),
-    getNumber(redis, annualGoalKey, annualGoalCents),
-    getNumber(redis, monthlyDonorCountKey, 0),
-    redis.get<string | null>(lastUpdatedKey),
-    redis.lrange<string>(donorWallKey, 0, 49)
+  const [storedAnnualGoalCents, summaryResult, donorsResult] = await Promise.all([
+    getAnnualGoalCents(supabase),
+    supabase
+      .from("donation_summary")
+      .select("total_raised_cents, monthly_donor_count, last_updated")
+      .maybeSingle<DonationSummaryRow>(),
+    supabase
+      .from("donations")
+      .select("donor_display_name")
+      .not("donor_display_name", "is", null)
+      .neq("donor_display_name", "")
+      .order("created_at", { ascending: false })
+      .limit(50)
+      .returns<DonorRow[]>()
   ]);
 
-  const donors = donorEntries
-    .map((entry) => {
-      try {
-        const parsed = JSON.parse(entry) as { displayName?: string };
-        return parsed.displayName ? { displayName: parsed.displayName } : null;
-      } catch {
-        return null;
-      }
-    })
-    .filter((entry): entry is { displayName: string } => Boolean(entry));
+  if (summaryResult.error) {
+    throw summaryResult.error;
+  }
+
+  if (donorsResult.error) {
+    throw donorsResult.error;
+  }
+
+  const summary = summaryResult.data;
+  const donors = (donorsResult.data ?? [])
+    .map((entry) => entry.donor_display_name?.trim())
+    .filter((displayName): displayName is string => Boolean(displayName))
+    .map((displayName) => ({ displayName }));
 
   return {
-    totalRaisedCents,
+    totalRaisedCents: parseCents(summary?.total_raised_cents, 0),
     annualGoalCents: storedAnnualGoalCents,
-    monthlyDonorCount,
-    lastUpdated,
+    monthlyDonorCount: parseCents(summary?.monthly_donor_count, 0),
+    lastUpdated: summary?.last_updated ?? null,
     donors
   };
 }
 
 export async function hasProcessedEvent(eventId: string): Promise<boolean> {
-  const redis = getRedis();
-  if (!redis) {
+  const supabase = getSupabase();
+  if (!supabase) {
     return false;
   }
 
-  return Boolean(await redis.sismember(processedEventsKey, eventId));
+  const { data, error } = await supabase
+    .from("stripe_processed_events")
+    .select("event_id")
+    .eq("event_id", eventId)
+    .maybeSingle<{ event_id: string }>();
+
+  if (error) {
+    throw error;
+  }
+
+  return Boolean(data);
 }
 
 export async function markProcessedEvent(eventId: string): Promise<void> {
-  const redis = getRedis();
-  if (!redis) {
+  const supabase = getSupabase();
+  if (!supabase) {
     return;
   }
 
-  await redis.sadd(processedEventsKey, eventId);
+  const { error } = await supabase
+    .from("stripe_processed_events")
+    .upsert({ event_id: eventId }, { onConflict: "event_id", ignoreDuplicates: true });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function recordDonationPayment(amountCents: number, donorDisplayName?: string): Promise<void> {
-  const redis = getRedis();
-  if (!redis || amountCents <= 0) {
+  const supabase = getSupabase();
+  if (!supabase || amountCents <= 0) {
     return;
   }
 
-  await Promise.all([
-    redis.incrby(totalRaisedKey, amountCents),
-    redis.set(lastUpdatedKey, new Date().toISOString()),
-    donorDisplayName ? addDonorDisplayName(donorDisplayName) : Promise.resolve()
-  ]);
+  const { error } = await supabase.from("donations").insert({
+    amount_cents: amountCents,
+    donor_display_name: cleanDisplayName(donorDisplayName),
+    is_monthly: false
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function recordMonthlyDonor(donorDisplayName?: string): Promise<void> {
-  const redis = getRedis();
-  if (!redis) {
+  const supabase = getSupabase();
+  if (!supabase) {
     return;
   }
 
-  await Promise.all([
-    redis.incrby(monthlyDonorCountKey, 1),
-    redis.set(lastUpdatedKey, new Date().toISOString()),
-    donorDisplayName ? addDonorDisplayName(donorDisplayName) : Promise.resolve()
-  ]);
+  const { error } = await supabase.from("donations").insert({
+    amount_cents: 0,
+    donor_display_name: cleanDisplayName(donorDisplayName),
+    is_monthly: true
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function subtractRefundedAmount(amountCents: number): Promise<void> {
-  const redis = getRedis();
-  if (!redis || amountCents <= 0) {
+  const supabase = getSupabase();
+  if (!supabase || amountCents <= 0) {
     return;
   }
 
-  await Promise.all([
-    redis.incrby(totalRaisedKey, -amountCents),
-    redis.set(lastUpdatedKey, new Date().toISOString())
-  ]);
+  const { error } = await supabase.from("donations").insert({
+    amount_cents: -amountCents,
+    donor_display_name: null,
+    is_monthly: false
+  });
+
+  if (error) {
+    throw error;
+  }
 }
 
-async function addDonorDisplayName(displayName: string): Promise<void> {
-  const redis = getRedis();
-  const trimmed = displayName.trim().slice(0, 80);
-
-  if (!redis || !trimmed) {
+export async function recordRefund(refundId: string, amountCents: number): Promise<void> {
+  const supabase = getSupabase();
+  if (!supabase || !refundId || amountCents <= 0) {
     return;
   }
 
-  await redis.lpush(
-    donorWallKey,
-    JSON.stringify({
-      displayName: trimmed,
-      createdAt: new Date().toISOString()
-    })
-  );
+  const { data, error } = await supabase
+    .from("stripe_refunds")
+    .upsert(
+      {
+        refund_id: refundId,
+        amount_cents: amountCents
+      },
+      { onConflict: "refund_id", ignoreDuplicates: true }
+    )
+    .select("refund_id")
+    .maybeSingle<{ refund_id: string }>();
+
+  if (error) {
+    throw error;
+  }
+
+  if (data) {
+    await subtractRefundedAmount(amountCents);
+  }
+}
+
+function cleanDisplayName(displayName: string | undefined): string | null {
+  const trimmed = displayName?.trim().slice(0, 80);
+  return trimmed || null;
 }
