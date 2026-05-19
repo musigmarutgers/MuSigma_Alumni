@@ -43,6 +43,15 @@ export const pmdOpenPhotos = [
   { src: "/pmd-open/pmd-open-2.jpg", alt: "PMD Open golfer on the course", width: 3993, height: 2728 }
 ];
 
+export const bbqPhotos = [
+  { src: "/events/bbq/spring-bbq-1.png", alt: "Brothers and alumni gathered at the Spring 2026 Alumni BBQ", width: 4032, height: 3024 },
+  { src: "/events/bbq/spring-bbq-2.png", alt: "Spring 2026 Alumni BBQ group photo on Senior Street", width: 4032, height: 3024 },
+  { src: "/events/bbq/spring-bbq-3.png", alt: "Mu Sigma brothers reconnecting at the Spring 2026 Alumni BBQ", width: 4032, height: 3024 },
+  { src: "/events/bbq/spring-bbq-4.png", alt: "Cookout table and alumni gathering at the Spring 2026 BBQ", width: 4032, height: 3024 },
+  { src: "/events/bbq/spring-bbq-5.png", alt: "Spring 2026 Alumni BBQ gathering at 50 and 54 Senior Street", width: 4032, height: 3024 },
+  { src: "/events/bbq/spring-bbq-6.png", alt: "Brothers and alumni at the Spring 2026 Alumni BBQ", width: 4032, height: 3024 }
+];
+
 export const sponsorLogos = [
   { name: "Scarlet Pub", src: "/sponsors/scarlet-pub.png", width: 1145, height: 599 },
   { name: "Tacoria", src: "/sponsors/tacoria.jpg", width: 1200, height: 627 },
@@ -129,36 +138,20 @@ export const updateCards = [
 
 export const events = [
   {
-    title: "Alumni Weekend",
-    date: "Date to be announced",
-    location: "Campus location to be announced",
-    description: "A weekend built around connection, chapter updates, and a clear path for alumni who want to support the next year of impact.",
+    title: "10th Year Anniversary",
+    date: "Details coming soon",
+    location: "Location to be announced",
+    description: "A larger anniversary moment for alumni, active brothers, and the people who helped build Mu Sigma across the last decade.",
     ctaLabel: "Join reminders",
     ctaHref: externalLinks.alumniNetwork
   },
   {
     title: "Homecoming Gathering",
-    date: "Date to be announced",
+    date: "Details coming soon",
     location: "Tailgate location to be announced",
     description: "A low-friction gathering point for alumni, families, and chapter leadership around Homecoming weekend.",
     ctaLabel: "Join reminders",
     ctaHref: externalLinks.alumniNetwork
-  },
-  {
-    title: "PMD Open",
-    date: "Spring 2026",
-    location: "Rutgers University Golf Course",
-    description: "The annual alumni golf outing supporting Scramble for the Kids, Embrace Kids Foundation, chapter sustainability, and alumni engagement.",
-    ctaLabel: "View event",
-    ctaHref: "/pmd-open"
-  },
-  {
-    title: "Service Showcase",
-    date: "Timing to be announced",
-    location: "Campus location to be announced",
-    description: "A short alumni-facing recap of service initiatives and the outcomes made possible by consistent alumni support.",
-    ctaLabel: "Get updates",
-    ctaHref: externalLinks.newsletterSignup
   }
 ];
 
