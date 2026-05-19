@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 type CalloutBandProps = {
+  id?: string;
   eyebrow?: string;
   title: string;
   description: string;
@@ -11,6 +12,7 @@ type CalloutBandProps = {
 };
 
 export function CalloutBand({
+  id,
   eyebrow,
   title,
   description,
@@ -20,7 +22,7 @@ export function CalloutBand({
   secondaryHref
 }: CalloutBandProps) {
   return (
-    <section className="callout-band">
+    <section className="callout-band" id={id}>
       <div>
         {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
         <h2>{title}</h2>

@@ -112,6 +112,15 @@ main {
   font-size: 0.8rem;
 }
 
+.brand-crest {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(255, 143, 0, 0.22);
+  object-fit: cover;
+}
+
 .site-nav {
   display: flex;
   align-items: center;
@@ -939,7 +948,7 @@ main {
 }
 
 .open-hero::before {
-  background-image: url("/hero-slide-4.jpeg");
+  background-image: url("/pmd-open/pmd-open-5.jpg");
 }
 
 .chapter-hero::before {
@@ -1073,7 +1082,7 @@ main {
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(23, 20, 17, 0.92), rgba(255, 143, 0, 0.7)),
-    url("/hero-slide-4.jpeg") center / cover;
+    url("/pmd-open/pmd-open-8.jpg") center / cover;
   box-shadow: var(--shadow);
   color: white;
   padding: 1.5rem;
@@ -1105,6 +1114,29 @@ main {
 
 .sponsor-lanes {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sponsor-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.sponsor-logo-card {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  padding: 1.2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.sponsor-logo-card img {
+  max-height: 82px;
+  width: auto;
+  object-fit: contain;
 }
 
 .media-collage {
@@ -1392,6 +1424,7 @@ main {
   }
 
   .sponsor-lanes,
+  .sponsor-logo-grid,
   .rhythm-list,
   .spotlight-row {
     grid-template-columns: 1fr;
@@ -1529,6 +1562,7 @@ main {
   .ledger-grid,
   .dashboard-strip,
   .newsletter-slots,
+  .sponsor-logo-grid,
   .board-grid,
   .media-collage,
   .gallery-grid.cinematic {

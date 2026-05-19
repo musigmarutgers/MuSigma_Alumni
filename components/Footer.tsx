@@ -14,8 +14,8 @@ export function Footer() {
       <div className="footer-links">
         <Link href="/impact-fund">Support the Impact Fund</Link>
         <Link href="/events">View events</Link>
-        <a href={externalLinks.alumniNetwork}>TODO: Join the network</a>
-        <a href="mailto:TODO:alumni@musigma.org">TODO: Contact alumni board</a>
+        <a href={externalLinks.alumniNetwork}>Join the network</a>
+        <Link href="/about#contact">Contact alumni board</Link>
       </div>
     </footer>
   );

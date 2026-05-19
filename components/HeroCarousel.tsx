@@ -43,7 +43,7 @@ export function HeroCarousel() {
             Support the Impact Fund
           </Link>
           <a className="button secondary on-dark" href={externalLinks.alumniNetwork}>
-            TODO: Join the Alumni Network
+            Join the Alumni Network
           </a>
         </div>
         <p className="hero-meta">Public pages for giving, events, chapter updates, finance, newsletters, and governance.</p>

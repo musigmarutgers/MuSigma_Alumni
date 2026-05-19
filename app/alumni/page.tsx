@@ -16,24 +16,25 @@ export default function AlumniPage() {
         description="This page previews spotlights, class connections, and future family tree features while keeping every personal detail public-safe."
         variant="alumni-hero"
         actions={[
-          { label: "TODO: Join the Alumni Network", href: externalLinks.alumniNetwork },
-          { label: "TODO: Update your info", href: externalLinks.updateForm, variant: "secondary" }
+          { label: "Join the Alumni Network", href: externalLinks.alumniNetwork },
+          { label: "Update your info", href: externalLinks.updateForm, variant: "secondary" }
         ]}
       />
 
       <CalloutBand
+        id="join-network"
         eyebrow="Join the network"
-        title="TODO: Connect the alumni email list, groupchat, or contact form."
-        description="Make this the primary intake point for alumni who want event reminders, PMD Open news, mentorship updates, and Impact Fund reporting."
-        primaryLabel="TODO: Join the Alumni Network"
+        title="The alumni network hub is the front door for reconnecting."
+        description="This hub gives alumni a clear path into event reminders, PMD Open news, mentorship updates, and Impact Fund reporting."
+        primaryLabel="Join the Alumni Network"
         primaryHref={externalLinks.alumniNetwork}
       />
 
       <section className="page-section">
         <SectionHeader
           eyebrow="Spotlights"
-          title="Sample alumni stories"
-          description="Replace these only after real alumni approve their names, class years, and stories."
+          title="Ways alumni can show up"
+          description="Personal stories can appear here with consent for names, class years, photos, and quotes."
         />
         <div className="spotlight-row">
           {alumniSpotlights.map((spotlight) => (
@@ -46,26 +47,26 @@ export default function AlumniPage() {
         </div>
       </section>
 
-      <section className="page-section muted two-column">
+      <section className="page-section muted two-column" id="update-info">
         <div>
           <SectionHeader eyebrow="Family trees preview" title="Big/Little lineage is a phase-two feature worth doing carefully." />
           <p>
-            For v1, show a static preview and collect clean data. A real lineage tool should be built only after the
-            association decides what information is public, opt-in, and maintainable.
+            A real lineage tool starts with clean opt-in data, verified relationships, and a clear decision about what
+            belongs on the public site.
           </p>
         </div>
         <article className="network-map">
           <div>
-            <span>Class</span>
-            <strong>TODO: 2020</strong>
+            <span>Step 1</span>
+            <strong>Collect opt-in data</strong>
           </div>
           <div>
-            <span>Big</span>
-            <strong>TODO: Big Brother</strong>
+            <span>Step 2</span>
+            <strong>Verify relationships</strong>
           </div>
           <div>
-            <span>Little</span>
-            <strong>TODO: Little Brother</strong>
+            <span>Step 3</span>
+            <strong>Publish opt-in views</strong>
           </div>
           <div>
             <span>Filters</span>

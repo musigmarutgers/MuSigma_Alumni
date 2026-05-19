@@ -14,7 +14,7 @@ export default function FinancePage() {
       <PageHero
         eyebrow="Financial transparency"
         title="Show enough to build trust without exposing sensitive details."
-        description="The finance page should explain public allocation categories, progress toward annual goals, and donor recognition rules."
+        description="The finance page explains public allocation categories, progress toward annual goals, and donor recognition rules."
         variant="finance-hero"
         actions={[
           { label: "Support the Impact Fund", href: "/impact-fund" },
@@ -26,13 +26,13 @@ export default function FinancePage() {
         <div>
           <SectionHeader eyebrow="Overview" title="High-level allocation model" />
           <p>
-            These categories are sample public budget buckets. Replace the percentages only after the association
-            approves final reporting language.
+            These public budget categories give alumni a plain-language view of how support is intended to be organized,
+            while official accounting remains in association records.
           </p>
           <div className="finance-rules">
             <span>No private donor amounts</span>
             <span>No customer IDs</span>
-            <span>Board-approved language only</span>
+            <span>Governance-aligned language</span>
           </div>
         </div>
         <DonationProgress compact />
@@ -63,7 +63,7 @@ export default function FinancePage() {
           <h3>Public tracker, not official books.</h3>
           <p>
             The website tracker is for public progress and recognition. Official accounting, refunds, receipts, and tax
-            language should remain in Stripe and board-approved records. TODO: confirm final nonprofit status wording.
+            language remain in Stripe, association records, and approved guidance.
           </p>
         </article>
       </section>

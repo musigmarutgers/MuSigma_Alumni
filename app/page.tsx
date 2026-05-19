@@ -25,7 +25,7 @@ export default function HomePage() {
         <SectionHeader
           eyebrow="Current signals"
           title="What alumni should see first"
-          description="These sample cards are designed to be replaced with real updates, dates, newsletter highlights, and governance language before launch."
+          description="A concise set of current paths helps alumni understand where to give, attend, reconnect, and follow association updates."
         />
         <div className="card-grid four">
           {updateCards.map((card) => (
@@ -35,10 +35,11 @@ export default function HomePage() {
       </section>
 
       <CalloutBand
+        id="chapter-needs"
         eyebrow="Wishlist support"
         title="Give the chapter practical support without sending money."
-        description="TODO: Connect this banner to a chapter wishlist so alumni can buy approved needs directly while the association finalizes long-term giving operations."
-        primaryLabel="TODO: View the wishlist"
+        description="The chapter needs hub can collect vetted non-cash needs, supplies, and volunteer asks alongside the Impact Fund."
+        primaryLabel="View chapter needs"
         primaryHref={externalLinks.wishlist}
         secondaryLabel="Support the Impact Fund"
         secondaryHref="/impact-fund"

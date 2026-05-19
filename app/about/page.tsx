@@ -13,10 +13,10 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About and governance"
         title="A public foundation for legitimacy and trust."
-        description="The association should explain its mission, governance, contact paths, and document access in direct language."
+        description="The association explains its mission, governance, contact paths, and document access in direct language."
         variant="about-hero"
         actions={[
-          { label: "TODO: View bylaws PDF", href: externalLinks.bylaws },
+          { label: "Governance documents", href: externalLinks.bylaws },
           { label: "Executive Board", href: "/executive-board", variant: "secondary" }
         ]}
       />
@@ -29,16 +29,16 @@ export default function AboutPage() {
             service and scholarship, and preserve the brotherhood across graduating classes.
           </p>
           <p>
-            TODO: Replace this mission with board-approved wording and confirm whether a Board of Trustees or alumni
-            advisory structure should be named publicly.
+            The site keeps governance language conservative and public-safe while the association maintains official
+            records, officer responsibilities, and any formal documents through its approved operating process.
           </p>
         </div>
-        <article className="contact-stack">
+        <article className="contact-stack" id="contact">
           <p className="eyebrow">Contact</p>
-          <h3>Role-based email placeholders</h3>
-          <a href="mailto:TODO:alumni@musigma.org">TODO:alumni@musigma.org</a>
-          <a href="mailto:TODO:impactfund@musigma.org">TODO:impactfund@musigma.org</a>
-          <a href="mailto:TODO:events@musigma.org">TODO:events@musigma.org</a>
+          <h3>Start with the right page</h3>
+          <a href={externalLinks.alumniNetwork}>Join the alumni network</a>
+          <a href="/impact-fund">Support the Impact Fund</a>
+          <a href="/events">View alumni events</a>
         </article>
       </section>
 
@@ -46,10 +46,10 @@ export default function AboutPage() {
         <SectionHeader eyebrow="FAQ" title="Questions alumni will ask first" align="center" />
         <div className="faq-list">
           {[
-            ["How do I join?", "TODO: Link the alumni network form, email list, or groupchat intake."],
+            ["How do I join?", "Use the Alumni page to enter the network hub and follow the next available intake path."],
             ["How do I support the Impact Fund?", "Use the Impact Fund page to start a Stripe Checkout session."],
-            ["Are contributions tax-deductible?", "TODO: Use final tax/legal language only after status and receipt process are confirmed."],
-            ["How do I update my info?", "TODO: Link a simple alumni update form."]
+            ["Are contributions tax-deductible?", "The website does not make tax-deductibility claims. Alumni should rely on official receipts and association guidance."],
+            ["How do I update my info?", "Use the Alumni page to reach the update-info section and keep contact details current."]
           ].map(([question, answer], index) => (
             <article key={question}>
               <span>0{index + 1}</span>
@@ -61,10 +61,11 @@ export default function AboutPage() {
       </section>
 
       <CalloutBand
+        id="documents"
         eyebrow="Documents"
-        title="TODO: Publish bylaws or governance PDFs when approved."
+        title="Governance documents and public records."
         description="Keep public governance documents easy to find, and avoid publishing drafts or sensitive internal records."
-        primaryLabel="TODO: View bylaws PDF"
+        primaryLabel="Review governance"
         primaryHref={externalLinks.bylaws}
         secondaryLabel="Executive Board"
         secondaryHref="/executive-board"

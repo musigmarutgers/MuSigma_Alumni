@@ -43,8 +43,8 @@ export function DonationProgress({ compact = false }: DonationProgressProps) {
     return (
       <section className="progress-panel">
         <p className="eyebrow">Impact Fund tracker</p>
-        <h3>Tracker setup pending</h3>
-        <p>{error} Add Stripe and Supabase environment variables to enable live tracking.</p>
+        <h3>Tracker setup in progress</h3>
+        <p>{error} Live tracking appears here when donation services are connected.</p>
       </section>
     );
   }
@@ -75,7 +75,7 @@ export function DonationProgress({ compact = false }: DonationProgressProps) {
       <div className="progress-meta">
         <span>Goal: {formatCurrency(summary.annualGoalCents)}</span>
         <span>{summary.monthlyDonorCount} monthly donors</span>
-        <span>{summary.lastUpdated ? `Updated ${new Date(summary.lastUpdated).toLocaleDateString()}` : "TODO: live data pending"}</span>
+        <span>{summary.lastUpdated ? `Updated ${new Date(summary.lastUpdated).toLocaleDateString()}` : "Live tracker initializing"}</span>
       </div>
     </section>
   );

@@ -112,7 +112,7 @@ export function DonationTierCard({
             maxLength={80}
             value={donorDisplayName}
             onChange={(event) => setDonorDisplayName(event.target.value)}
-            placeholder="TODO: Your name"
+            placeholder="Your name"
           />
         </label>
       ) : null}

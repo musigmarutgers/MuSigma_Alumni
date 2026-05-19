@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -12,7 +13,14 @@ export function Header() {
   return (
     <header className="site-header">
       <Link className="brand" href="/" onClick={() => setIsOpen(false)}>
-        <span className="brand-mark">PMD</span>
+        <Image
+          className="brand-crest"
+          src="/brand/mu-sigma-crest.jpg"
+          alt=""
+          width={44}
+          height={44}
+          priority
+        />
         <span>{siteName}</span>
       </Link>
       <button

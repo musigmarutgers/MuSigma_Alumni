@@ -2,7 +2,7 @@ import Image from "next/image";
 import { CalloutBand } from "@/components/CalloutBand";
 import { PageHero } from "@/components/PageHero";
 import { SectionHeader } from "@/components/SectionHeader";
-import { externalLinks, heroImages } from "@/lib/site-content";
+import { externalLinks, pmdOpenPhotos, sponsorLogos } from "@/lib/site-content";
 
 export const metadata = {
   title: "PMD Open"
@@ -14,56 +14,89 @@ export default function PmdOpenPage() {
       <PageHero
         eyebrow="Signature event"
         title="The PMD Open brings alumni back together with a purpose."
-        description="TODO: Confirm the annual golf outing date, beneficiary, course, format, registration deadline, and sponsor packages before launch."
+        description="A spring day at Rutgers University Golf Course, a table full of local support, and one more excuse for alumni and brothers to show up for each other."
         variant="open-hero"
         actions={[
-          { label: "TODO: Register", href: externalLinks.pmdOpenRegistration },
-          { label: "TODO: Sponsor", href: externalLinks.pmdOpenSponsorship, variant: "secondary" }
+          { label: "Register interest", href: externalLinks.pmdOpenRegistration },
+          { label: "Sponsor the event", href: externalLinks.pmdOpenSponsorship, variant: "secondary" }
         ]}
       />
 
-      <section className="page-section two-column story-section">
+      <section className="page-section two-column story-section" id="registration">
         <div>
           <SectionHeader eyebrow="Overview" title="Annual alumni golf outing" />
           <p>
-            The PMD Open is the association's signature annual event for reconnecting alumni, raising support, and
-            celebrating the chapter's current work.
+            The PMD Open is the association's signature alumni golf outing. It is part fundraiser, part reunion, and
+            part thank-you to the people and local businesses that keep the chapter close.
+          </p>
+          <p>
+            Under the banner of Scramble for the Kids, the outing supports Embrace Kids Foundation and its work helping
+            families whose children are facing cancer, sickle cell, and other serious health challenges.
           </p>
           <div className="detail-list">
-            <p><strong>Date:</strong> TODO: Summer 2026</p>
-            <p><strong>Location:</strong> TODO: Golf course and city</p>
-            <p><strong>Format:</strong> TODO: Scramble, foursomes, lunch, awards</p>
-            <p><strong>Beneficiary:</strong> TODO: Confirm benefiting organization</p>
+            <p><strong>Date:</strong> Spring 2026</p>
+            <p><strong>Location:</strong> Rutgers University Golf Course</p>
+            <p><strong>Format:</strong> Golf, alumni connection, lunch, and recognition</p>
+            <p><strong>Beneficiary:</strong> Scramble for the Kids, supporting Embrace Kids Foundation</p>
           </div>
         </div>
         <article className="event-proof-panel">
-          <p className="eyebrow">Past result sample</p>
-          <h3>TODO: $12,400 raised</h3>
-          <p>Replace this with verified PMD Open outcomes, photos, sponsor names, and beneficiary impact.</p>
+          <p className="eyebrow">Event energy</p>
+          <h3>Golf, raffles, sponsors, and Rutgers spirit.</h3>
+          <p>Thank you to every brother, alumnus, sponsor, and friend who made the PMD Open feel like PMD at its best.</p>
         </article>
       </section>
 
       <section className="page-section muted">
         <SectionHeader eyebrow="Event photos" title="Past PMD Open moments" align="center" />
         <div className="gallery-grid cinematic">
-          {heroImages.slice(0, 4).map((image) => (
-            <Image key={image.src} src={image.src} alt={image.alt} width={700} height={460} />
+          {pmdOpenPhotos.map((image) => (
+            <Image
+              key={image.src}
+              src={image.src}
+              alt={image.alt}
+              width={image.width}
+              height={image.height}
+              sizes="(max-width: 720px) 100vw, (max-width: 1180px) 50vw, 380px"
+            />
           ))}
         </div>
       </section>
 
-      <section className="page-section sponsor-runway">
+      <section className="page-section sponsor-runway" id="sponsorship">
         <SectionHeader
           eyebrow="Sponsor path"
           title="Make sponsorship feel concrete before alumni ask what it buys."
-          description="Replace these with final sponsor levels, benefits, and fulfillment rules once the PMD Open team approves them."
+          description="Sponsors help turn the outing into a real day of food, prizes, visibility, and support for Scramble for the Kids."
         />
         <div className="sponsor-lanes">
           {["Hole sponsor", "Lunch sponsor", "Title sponsor"].map((item, index) => (
             <article key={item}>
               <span>0{index + 1}</span>
-              <h3>TODO: {item}</h3>
-              <p>Public benefit language, logo placement rules, and payment link pending.</p>
+              <h3>{item}</h3>
+              <p>Recognition, event presence, and sponsor thank-yous are coordinated through the PMD Open team.</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="page-section muted">
+        <SectionHeader
+          eyebrow="Sponsor thank-you"
+          title="Local sponsors make the outing feel bigger than one round of golf."
+          description="Confirmed sponsors are part of the story: they help make the raffles, food, prizes, and event energy possible."
+          align="center"
+        />
+        <div className="sponsor-logo-grid">
+          {sponsorLogos.map((sponsor) => (
+            <article className="sponsor-logo-card" key={sponsor.name}>
+              <Image
+                src={sponsor.src}
+                alt={sponsor.name}
+                width={sponsor.width}
+                height={sponsor.height}
+                sizes="(max-width: 720px) 45vw, 180px"
+              />
             </article>
           ))}
         </div>
@@ -72,10 +105,10 @@ export default function PmdOpenPage() {
       <CalloutBand
         eyebrow="Registration and sponsorship"
         title="Make the PMD Open easy to join and easy to sponsor."
-        description="Connect these CTAs to the annual Google Form or registration platform once the event details are approved."
-        primaryLabel="TODO: Register"
+        description="Spring 2026 interest, sponsor conversations, and event updates all start from one clear PMD Open path."
+        primaryLabel="Register interest"
         primaryHref={externalLinks.pmdOpenRegistration}
-        secondaryLabel="TODO: Sponsor"
+        secondaryLabel="Sponsor the event"
         secondaryHref={externalLinks.pmdOpenSponsorship}
       />
     </>

@@ -9,6 +9,14 @@ export const metadata = {
   title: "Impact Fund"
 };
 
+const allocationNotes = [
+  "Operating support for the basic tools, spaces, and logistics that keep chapter work steady.",
+  "Support for service events, community-facing projects, and beneficiary-centered efforts.",
+  "Scholarship-style or award support handled through association policy and approved records.",
+  "Training, officer transition resources, and experiences that help leaders sustain the chapter.",
+  "A continuity reserve that helps the association plan beyond one campaign or school year."
+];
+
 export default function ImpactFundPage() {
   return (
     <>
@@ -28,7 +36,7 @@ export default function ImpactFundPage() {
           <SectionHeader
             eyebrow="What it funds"
             title="A practical fund for the work that keeps Mu Sigma strong."
-            description="This page uses sample copy and TODO values until the alumni board approves final language."
+            description="The fund is framed around public, non-sensitive categories that alumni can understand and revisit."
           />
           <p>
             The Impact Fund is designed to make alumni support consistent instead of reactive. Monthly gifts help the
@@ -89,7 +97,7 @@ export default function ImpactFundPage() {
               <article className="ledger-item" key={item}>
                 <span>0{index + 1}</span>
                 <h3>{item}</h3>
-                <p>TODO: Replace this sample allocation note with board-approved language.</p>
+                <p>{allocationNotes[index]}</p>
               </article>
             )
           )}

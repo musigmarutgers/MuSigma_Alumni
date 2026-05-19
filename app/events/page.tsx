@@ -23,10 +23,11 @@ export default function EventsPage() {
       />
 
       <CalloutBand
+        id="calendar"
         eyebrow="Calendar"
-        title="TODO: Connect the public alumni calendar."
-        description="Use a Google Calendar or Outlook-compatible public calendar link so alumni can subscribe once and keep every event on their radar."
-        primaryLabel="TODO: Open public calendar"
+        title="The public alumni calendar hub keeps the year visible."
+        description="Calendar subscription details belong here so alumni can save events once and keep the year on their radar."
+        primaryLabel="Open calendar hub"
         primaryHref={externalLinks.calendar}
         secondaryLabel="Join reminders"
         secondaryHref={externalLinks.alumniNetwork}
