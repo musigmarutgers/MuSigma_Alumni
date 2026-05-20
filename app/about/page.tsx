@@ -48,7 +48,7 @@ export default function AboutPage() {
           {[
             ["How do I join?", "Use the Alumni page to enter the network hub and follow the next available intake path."],
             ["How do I support the Impact Fund?", "Use the Impact Fund page to start a Stripe Checkout session."],
-            ["Are contributions tax-deductible?", "The website does not make tax-deductibility claims. Alumni should rely on official receipts and association guidance."],
+            ["Are contributions tax-deductible?", "Yes, contributions are fully tax-deductible. The Alumni Impact Fund is operated by the Mu Sigma Alumni Association, which is a registered 501(c)(3) nonprofit organization. All donations are processed through that entity - not the undergraduate chapter - and every contribution qualifies for a tax deduction. Donors will receive official receipts through Stripe upon payment. For any specific tax questions, reach out to Brian Buonauro at brianbuonauro@gmail.com or (551) 795-2182."],
             ["How do I update my info?", "Use the Alumni page to reach the update-info section and keep contact details current."]
           ].map(([question, answer], index) => (
             <article key={question}>
