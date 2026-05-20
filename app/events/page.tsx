@@ -25,7 +25,7 @@ const eventRecaps = [
     date: "Spring 2026",
     location: "50 and 54 Senior Street",
     description:
-      "A casual cookout for brothers and alumni to reconnect, meet the active chapter, and keep the Mu Sigma thread alive.",
+      "A casual cookout for alumni to reconnect, meet chapter leadership, and keep the Mu Sigma thread alive.",
     photos: bbqPhotos.slice(0, 4)
   }
 ];
@@ -48,7 +48,7 @@ export default function EventsPage() {
         <SectionHeader
           eyebrow="Done so far"
           title="Recent Mu Sigma moments"
-          description="These are the events already in the books, captured as a simple record for alumni who could not make it and brothers who want to remember it."
+          description="These are the events already in the books, captured as a simple record for alumni who could not make it and want to remember it."
         />
         <div className="event-recap-stack">
           {eventRecaps.map((event) => (

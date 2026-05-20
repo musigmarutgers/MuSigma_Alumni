@@ -14,7 +14,7 @@ export default function PmdOpenPage() {
       <PageHero
         eyebrow="Signature event"
         title="The PMD Open brings alumni back together with a purpose."
-        description="A spring day at Rutgers University Golf Course, a table full of local support, and one more excuse for alumni and brothers to show up for each other."
+        description="A spring day at Rutgers University Golf Course, a table full of local support, and one more excuse for the wider Mu Sigma community to show up for each other."
         variant="open-hero"
         actions={[
           { label: "Register interest", href: externalLinks.pmdOpenRegistration },

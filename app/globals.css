@@ -548,6 +548,37 @@ main {
   content: " ->";
 }
 
+.home-story {
+  display: grid;
+  grid-template-columns: minmax(270px, 0.7fr) minmax(0, 1.3fr);
+  gap: 2rem;
+  align-items: end;
+}
+
+.home-story-copy .section-header {
+  margin-bottom: 0;
+}
+
+.home-story-gallery {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 0.75rem;
+  min-height: 430px;
+}
+
+.home-story-gallery img {
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: var(--shadow-soft);
+}
+
+.home-story-gallery img:first-child {
+  grid-row: span 2;
+}
+
 .stats-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -1461,6 +1492,7 @@ main {
   }
 
   .hero-proof,
+  .home-story,
   .pathway-section {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1579,6 +1611,7 @@ main {
   .two-column,
   .site-footer,
   .callout-band,
+  .home-story,
   .pathway-section {
     grid-template-columns: 1fr;
   }
@@ -1619,6 +1652,7 @@ main {
   .sponsor-logo-grid,
   .board-grid,
   .media-collage,
+  .home-story-gallery,
   .gallery-grid.cinematic {
     grid-template-columns: 1fr;
   }
@@ -1645,6 +1679,7 @@ main {
   }
 
   .gallery-grid.cinematic img:first-child,
+  .home-story-gallery img:first-child,
   .event-photo-strip img:first-child,
   .media-collage img:first-child {
     grid-row: auto;

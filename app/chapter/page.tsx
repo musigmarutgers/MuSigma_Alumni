@@ -26,9 +26,9 @@ const chapterUpdates = [
     description: "A curated moment that helps alumni recognize the culture they helped build."
   },
   {
-    eyebrow: "Recruitment",
-    title: "Recruitment snapshot",
-    description: "High-level recruitment progress and values, avoiding sensitive internal strategy."
+    eyebrow: "Alumni engagement",
+    title: "Engagement snapshot",
+    description: "A quick look at how alumni are showing up through events, mentorship, and support."
   }
 ];
 
@@ -36,7 +36,7 @@ const operationsSummaries = [
   "Officer priorities, public-facing goals, and leadership transition needs.",
   "Service work, beneficiary updates, and outcomes that are appropriate to share.",
   "Chapter traditions, alumni touchpoints, and brotherhood programming highlights.",
-  "High-level recruitment values and momentum without private strategy details.",
+  "Alumni engagement momentum across events, mentorship, and chapter support.",
   "Recognitions, chapter milestones, and moments worth preserving."
 ];
 
@@ -85,7 +85,7 @@ export default function ChapterPage() {
       <section className="page-section muted">
         <SectionHeader eyebrow="Operations snapshot" title="A simple dashboard for accountability." align="center" />
         <div className="dashboard-strip">
-          {["Leadership overview", "Service initiatives", "Brotherhood events", "Recruitment efforts", "Awards and recognition"].map(
+          {["Leadership overview", "Service initiatives", "Brotherhood events", "Alumni engagement", "Awards and recognition"].map(
             (item, index) => (
               <article key={item}>
                 <span>0{index + 1}</span>
@@ -108,18 +108,18 @@ export default function ChapterPage() {
           <a className="text-link" href={externalLinks.instagram}>View social highlights</a>
         </article>
         <article className="content-card">
-          <p className="eyebrow">New member highlights</p>
-          <h3>New member class highlights</h3>
+          <p className="eyebrow">Alumni spotlight lane</p>
+          <h3>Stories worth sharing</h3>
           <p>
-            Bios and class photos belong here only after real new members approve publication.
+            Alumni stories, mentorship wins, and chapter milestones can live here as the archive grows.
           </p>
         </article>
       </section>
 
       <CalloutBand
-        id="chapter-needs"
-        title="Share chapter needs and updates alumni can actually use."
-        description="Approved needs, monthly notes, and public-safe asks keep the network warm and give donors confidence before major campaigns."
+        id="chapter-updates"
+        title="Share chapter updates alumni can actually use."
+        description="Approved monthly notes and public-safe asks keep the network warm and give donors confidence before major campaigns."
         primaryLabel="Share an update"
         primaryHref={externalLinks.updateForm}
       />
