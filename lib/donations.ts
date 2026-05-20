@@ -21,8 +21,13 @@ export type DonationSummaryResponse = {
   totalRaisedCents: number;
   annualGoalCents: number;
   monthlyDonorCount: number;
+  legacyTotalCents: number;
+  legacyDonorCount: number;
   lastUpdated: string | null;
   donors: Array<{
+    displayName: string;
+  }>;
+  legacyDonors: Array<{
     displayName: string;
   }>;
 };
@@ -126,5 +131,14 @@ export function formatCurrency(cents: number): string {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0
+  }).format(cents / 100);
+}
+
+export function formatCurrencyWithCents(cents: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   }).format(cents / 100);
 }

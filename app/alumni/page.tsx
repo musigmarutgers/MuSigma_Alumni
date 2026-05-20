@@ -17,7 +17,7 @@ export default function AlumniPage() {
         variant="alumni-hero"
         actions={[
           { label: "Join the Alumni Network", href: externalLinks.alumniNetwork },
-          { label: "Update your info", href: externalLinks.updateForm, variant: "secondary" }
+          { label: "Mentorship Form", href: externalLinks.mentorshipForm, variant: "secondary" }
         ]}
       />
 
@@ -28,6 +28,8 @@ export default function AlumniPage() {
         description="This hub gives alumni a clear path into event reminders, PMD Open news, mentorship updates, and Impact Fund reporting."
         primaryLabel="Join the Alumni Network"
         primaryHref={externalLinks.alumniNetwork}
+        secondaryLabel="Open Mentorship Form"
+        secondaryHref={externalLinks.mentorshipForm}
       />
 
       <section className="page-section">

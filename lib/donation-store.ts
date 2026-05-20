@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { DonationSummaryResponse } from "@/lib/donations";
+import { legacyDonorSnapshot } from "@/lib/legacy-donors";
 
 const fallbackTotalRaisedCents = 1850000;
 const fallbackMonthlyDonorCount = 42;
@@ -20,6 +21,8 @@ type DonorRow = {
 type DonationSettingRow = {
   value: string | null;
 };
+
+type PublicDonor = DonationSummaryResponse["donors"][number];
 
 function configured(value: string | undefined): value is string {
   return Boolean(value && !value.includes("TODO") && !value.includes("your_"));
@@ -72,18 +75,58 @@ async function getAnnualGoalCents(supabase: SupabaseClient): Promise<number> {
   return parseCents(data?.value, fallback);
 }
 
+function getLegacyDonorsForResponse(): PublicDonor[] {
+  return legacyDonorSnapshot.donors.map(({ displayName }) => ({ displayName }));
+}
+
+function mergePublicDonors(donors: PublicDonor[]): PublicDonor[] {
+  const seen = new Set<string>();
+
+  return [...donors, ...getLegacyDonorsForResponse()].filter((donor) => {
+    const key = donor.displayName.trim().toLowerCase();
+
+    if (!key || seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
+function buildDonationSummary(summary: {
+  totalRaisedCents: number;
+  annualGoalCents: number;
+  monthlyDonorCount: number;
+  lastUpdated: string | null;
+  donors: PublicDonor[];
+}): DonationSummaryResponse {
+  const legacyDonors = getLegacyDonorsForResponse();
+
+  return {
+    ...summary,
+    donors: mergePublicDonors(summary.donors),
+    legacyTotalCents: legacyDonorSnapshot.lifetimeTotalCents,
+    legacyDonorCount: legacyDonors.length,
+    legacyDonors
+  };
+}
+
+export function getFallbackDonationSummary(): DonationSummaryResponse {
+  return buildDonationSummary({
+    totalRaisedCents: fallbackTotalRaisedCents,
+    annualGoalCents: getAnnualGoalFromEnv(),
+    monthlyDonorCount: fallbackMonthlyDonorCount,
+    lastUpdated: null,
+    donors: []
+  });
+}
+
 export async function getDonationSummary(): Promise<DonationSummaryResponse> {
-  const annualGoalCents = getAnnualGoalFromEnv();
   const supabase = getSupabase();
 
   if (!supabase) {
-    return {
-      totalRaisedCents: fallbackTotalRaisedCents,
-      annualGoalCents,
-      monthlyDonorCount: fallbackMonthlyDonorCount,
-      lastUpdated: null,
-      donors: []
-    };
+    return getFallbackDonationSummary();
   }
 
   const [storedAnnualGoalCents, summaryResult, donorsResult] = await Promise.all([
@@ -116,13 +159,13 @@ export async function getDonationSummary(): Promise<DonationSummaryResponse> {
     .filter((displayName): displayName is string => Boolean(displayName))
     .map((displayName) => ({ displayName }));
 
-  return {
+  return buildDonationSummary({
     totalRaisedCents: parseCents(summary?.total_raised_cents, 0),
     annualGoalCents: storedAnnualGoalCents,
     monthlyDonorCount: parseCents(summary?.monthly_donor_count, 0),
     lastUpdated: summary?.last_updated ?? null,
     donors
-  };
+  });
 }
 
 export async function hasProcessedEvent(eventId: string): Promise<boolean> {

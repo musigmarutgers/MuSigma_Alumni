@@ -31,9 +31,9 @@ export function DonorWall() {
 
   return (
     <section className="content-card donor-wall">
-      <p className="eyebrow">Opt-in donor wall</p>
-      <h3>Alumni helping build the next year</h3>
-      <p>Only donors who opt in are shown here. Exact amounts, tiers, emails, and billing details are never public.</p>
+      <p className="eyebrow">Legacy and opt-in donor wall</p>
+      <h3>Alumni already carrying the fund</h3>
+      <p>Legacy dashboard donors and live opt-in donors are shown by name. Exact amounts, tiers, emails, and billing details are never public.</p>
       {donors.length > 0 ? (
         <ul className="name-list">
           {donors.map((donor) => (

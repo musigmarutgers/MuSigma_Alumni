@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDonationSummary } from "@/lib/donation-store";
+import { getDonationSummary, getFallbackDonationSummary } from "@/lib/donation-store";
 
 export const runtime = "nodejs";
 
@@ -8,15 +8,6 @@ export async function GET() {
     const summary = await getDonationSummary();
     return NextResponse.json(summary);
   } catch {
-    return NextResponse.json(
-      {
-        totalRaisedCents: 1850000,
-        annualGoalCents: 2500000,
-        monthlyDonorCount: 42,
-        lastUpdated: null,
-        donors: []
-      },
-      { status: 200 }
-    );
+    return NextResponse.json(getFallbackDonationSummary(), { status: 200 });
   }
 }

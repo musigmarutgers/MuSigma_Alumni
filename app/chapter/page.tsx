@@ -171,7 +171,7 @@ const highlightSections: HighlightSection[] = [
   },
   {
     eyebrow: "Backyard bracket",
-    title: "Beer Olympics",
+    title: "Mud Olympics",
     description:
       "Flags up, teams moving, and the backyard turned into a full-day tournament with the usual Mu Sigma level of commitment.",
     photos: [photos.beerOlympicsYard, photos.beerOlympicsTable, photos.beerOlympicsThrow],

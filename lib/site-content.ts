@@ -13,6 +13,7 @@ export const navItems = [
 
 export const externalLinks = {
   alumniNetwork: "/alumni#join-network",
+  mentorshipForm: "https://docs.google.com/forms/d/e/1FAIpQLSdEDhDRvzRrY7arXgdDm-pwrK05M86kDT5toHBwDW6Ct0kT9g/viewform",
   calendar: "/events#calendar",
   newsletterSignup: "/newsletter#signup",
   instagram: "/chapter#social-highlights",

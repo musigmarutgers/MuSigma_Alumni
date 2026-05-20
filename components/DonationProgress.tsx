@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { DonationSummaryResponse } from "@/lib/donations";
-import { formatCurrency } from "@/lib/donations";
+import { formatCurrency, formatCurrencyWithCents } from "@/lib/donations";
 
 type DonationProgressProps = {
   compact?: boolean;
@@ -76,6 +76,16 @@ export function DonationProgress({ compact = false }: DonationProgressProps) {
         <span>Goal: {formatCurrency(summary.annualGoalCents)}</span>
         <span>{summary.monthlyDonorCount} monthly donors</span>
         <span>{summary.lastUpdated ? `Updated ${new Date(summary.lastUpdated).toLocaleDateString()}` : "Live tracker initializing"}</span>
+      </div>
+      <div className="progress-metrics" aria-label="Legacy donor dashboard snapshot">
+        <div>
+          <strong>{formatCurrencyWithCents(summary.legacyTotalCents)}</strong>
+          <span>legacy lifetime total</span>
+        </div>
+        <div>
+          <strong>{summary.legacyDonorCount}</strong>
+          <span>legacy donors recognized</span>
+        </div>
       </div>
     </section>
   );
