@@ -23,10 +23,6 @@ create table if not exists public.donation_settings (
   updated_at timestamptz not null default now()
 );
 
-insert into public.donation_settings (key, value)
-values ('annual_goal_cents', '2500000')
-on conflict (key) do nothing;
-
 create or replace view public.donation_summary as
 select
   coalesce(sum(amount_cents), 0)::integer as total_raised_cents,

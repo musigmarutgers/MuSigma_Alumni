@@ -1,12 +1,6 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { DonationSummaryResponse } from "@/lib/donations";
 import { legacyDonorSnapshot } from "@/lib/legacy-donors";
-
-const fallbackTotalRaisedCents = 1850000;
-const fallbackMonthlyDonorCount = 42;
-const fallbackAnnualGoalCents = 2500000;
-
-let supabaseClient: SupabaseClient | null | undefined;
 
 type DonationSummaryRow = {
   total_raised_cents: number | string | null;
@@ -24,40 +18,13 @@ type DonationSettingRow = {
 
 type PublicDonor = DonationSummaryResponse["donors"][number];
 
-function configured(value: string | undefined): value is string {
-  return Boolean(value && !value.includes("TODO") && !value.includes("your_"));
-}
-
-function getSupabase(): SupabaseClient | null {
-  if (supabaseClient !== undefined) {
-    return supabaseClient;
-  }
-
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
-  const secretKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!configured(url) || !configured(secretKey)) {
-    supabaseClient = null;
-    return supabaseClient;
-  }
-
-  supabaseClient = createClient(url, secretKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  });
-
-  return supabaseClient;
-}
-
 function parseCents(value: string | number | null | undefined, fallback: number): number {
   const parsed = typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
   return Number.isFinite(parsed) ? Number(parsed) : fallback;
 }
 
 function getAnnualGoalFromEnv(): number {
-  return parseCents(process.env.NEXT_PUBLIC_ANNUAL_DONATION_GOAL_CENTS, fallbackAnnualGoalCents);
+  return parseCents(process.env.NEXT_PUBLIC_ANNUAL_DONATION_GOAL_CENTS, 0);
 }
 
 async function getAnnualGoalCents(supabase: SupabaseClient): Promise<number> {
@@ -112,23 +79,7 @@ function buildDonationSummary(summary: {
   };
 }
 
-export function getFallbackDonationSummary(): DonationSummaryResponse {
-  return buildDonationSummary({
-    totalRaisedCents: fallbackTotalRaisedCents,
-    annualGoalCents: getAnnualGoalFromEnv(),
-    monthlyDonorCount: fallbackMonthlyDonorCount,
-    lastUpdated: null,
-    donors: []
-  });
-}
-
-export async function getDonationSummary(): Promise<DonationSummaryResponse> {
-  const supabase = getSupabase();
-
-  if (!supabase) {
-    return getFallbackDonationSummary();
-  }
-
+export async function getDonationSummary(supabase: SupabaseClient): Promise<DonationSummaryResponse> {
   const [storedAnnualGoalCents, summaryResult, donorsResult] = await Promise.all([
     getAnnualGoalCents(supabase),
     supabase
@@ -168,12 +119,7 @@ export async function getDonationSummary(): Promise<DonationSummaryResponse> {
   });
 }
 
-export async function hasProcessedEvent(eventId: string): Promise<boolean> {
-  const supabase = getSupabase();
-  if (!supabase) {
-    return false;
-  }
-
+export async function hasProcessedEvent(supabase: SupabaseClient, eventId: string): Promise<boolean> {
   const { data, error } = await supabase
     .from("stripe_processed_events")
     .select("event_id")
@@ -187,12 +133,7 @@ export async function hasProcessedEvent(eventId: string): Promise<boolean> {
   return Boolean(data);
 }
 
-export async function markProcessedEvent(eventId: string): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase) {
-    return;
-  }
-
+export async function markProcessedEvent(supabase: SupabaseClient, eventId: string): Promise<void> {
   const { error } = await supabase
     .from("stripe_processed_events")
     .upsert({ event_id: eventId }, { onConflict: "event_id", ignoreDuplicates: true });
@@ -202,9 +143,12 @@ export async function markProcessedEvent(eventId: string): Promise<void> {
   }
 }
 
-export async function recordDonationPayment(amountCents: number, donorDisplayName?: string): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase || amountCents <= 0) {
+export async function recordDonationPayment(
+  supabase: SupabaseClient,
+  amountCents: number,
+  donorDisplayName?: string
+): Promise<void> {
+  if (amountCents <= 0) {
     return;
   }
 
@@ -219,12 +163,7 @@ export async function recordDonationPayment(amountCents: number, donorDisplayNam
   }
 }
 
-export async function recordMonthlyDonor(donorDisplayName?: string): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase) {
-    return;
-  }
-
+export async function recordMonthlyDonor(supabase: SupabaseClient, donorDisplayName?: string): Promise<void> {
   const { error } = await supabase.from("donations").insert({
     amount_cents: 0,
     donor_display_name: cleanDisplayName(donorDisplayName),
@@ -236,9 +175,8 @@ export async function recordMonthlyDonor(donorDisplayName?: string): Promise<voi
   }
 }
 
-export async function subtractRefundedAmount(amountCents: number): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase || amountCents <= 0) {
+export async function subtractRefundedAmount(supabase: SupabaseClient, amountCents: number): Promise<void> {
+  if (amountCents <= 0) {
     return;
   }
 
@@ -253,9 +191,8 @@ export async function subtractRefundedAmount(amountCents: number): Promise<void>
   }
 }
 
-export async function recordRefund(refundId: string, amountCents: number): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase || !refundId || amountCents <= 0) {
+export async function recordRefund(supabase: SupabaseClient, refundId: string, amountCents: number): Promise<void> {
+  if (!refundId || amountCents <= 0) {
     return;
   }
 
@@ -276,7 +213,7 @@ export async function recordRefund(refundId: string, amountCents: number): Promi
   }
 
   if (data) {
-    await subtractRefundedAmount(amountCents);
+    await subtractRefundedAmount(supabase, amountCents);
   }
 }
 

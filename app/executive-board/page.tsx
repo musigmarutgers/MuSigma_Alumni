@@ -23,7 +23,7 @@ export default function ExecutiveBoardPage() {
       />
 
       <section className="page-section">
-        <SectionHeader eyebrow="Leadership" title="Association leadership roles" />
+        <SectionHeader eyebrow="Leadership" title="Association Leadership" />
         <div className="board-grid">
           {boardMembers.map((member) => (
             <article className="content-card profile-card" key={member.role}>

@@ -40,9 +40,10 @@ Run the SQL in `supabase/schema.sql` from the Supabase SQL Editor before testing
 
 For the current Supabase dashboard:
 
-- `Project URL` should look like `https://YOUR_PROJECT_REF.supabase.co`
-- `Publishable key` goes in `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `Project URL` goes in `SUPABASE_URL`
+- `Publishable key` goes in `SUPABASE_PUBLISHABLE_KEY`
 - `Secret key` goes in `SUPABASE_SECRET_KEY`
+- `JWKS URL` goes in `SUPABASE_JWKS_URL`
 
 The app uses the secret key only from server-side API routes. Public visitors never receive it.
 

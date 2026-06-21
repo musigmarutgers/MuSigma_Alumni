@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
-import { getDonationSummary, getFallbackDonationSummary } from "@/lib/donation-store";
+import { withSupabase } from "@supabase/server";
+import { getDonationSummary } from "@/lib/donation-store";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export const GET = withSupabase({ auth: "none", cors: false }, async (_request, ctx) => {
   try {
-    const summary = await getDonationSummary();
-    return NextResponse.json(summary);
+    const summary = await getDonationSummary(ctx.supabaseAdmin);
+    return Response.json(summary);
   } catch {
-    return NextResponse.json(getFallbackDonationSummary(), { status: 200 });
+    return Response.json({ error: "Donation tracker is unavailable." }, { status: 503 });
   }
-}
+});

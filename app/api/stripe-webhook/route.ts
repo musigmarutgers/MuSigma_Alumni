@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { withSupabase } from "@supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 import {
   hasProcessedEvent,
@@ -37,7 +39,7 @@ async function metadataFromSubscription(stripe: Stripe, invoice: Stripe.Invoice)
   return invoiceMetadata;
 }
 
-async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
+async function handleEvent(supabase: SupabaseClient, stripe: Stripe, event: Stripe.Event): Promise<void> {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -45,11 +47,11 @@ async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
       const displayName = optInDisplayName(metadata);
 
       if (session.mode === "payment") {
-        await recordDonationPayment(session.amount_total ?? 0, displayName);
+        await recordDonationPayment(supabase, session.amount_total ?? 0, displayName);
       }
 
       if (session.mode === "subscription") {
-        await recordMonthlyDonor(displayName);
+        await recordMonthlyDonor(supabase, displayName);
       }
 
       return;
@@ -60,7 +62,7 @@ async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
       const metadata = await metadataFromSubscription(stripe, invoice);
 
       if (metadata.campaign === "impact_fund") {
-        await recordDonationPayment(invoice.amount_paid ?? 0, optInDisplayName(metadata));
+        await recordDonationPayment(supabase, invoice.amount_paid ?? 0, optInDisplayName(metadata));
       }
 
       return;
@@ -71,9 +73,9 @@ async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
       const refunds = charge.refunds?.data ?? [];
 
       if (refunds.length > 0) {
-        await Promise.all(refunds.map((refund) => recordRefund(refund.id, refund.amount ?? 0)));
+        await Promise.all(refunds.map((refund) => recordRefund(supabase, refund.id, refund.amount ?? 0)));
       } else {
-        await subtractRefundedAmount(charge.amount_refunded ?? 0);
+        await subtractRefundedAmount(supabase, charge.amount_refunded ?? 0);
       }
 
       return;
@@ -81,7 +83,7 @@ async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
 
     case "refund.created": {
       const refund = event.data.object as Stripe.Refund;
-      await recordRefund(refund.id, refund.amount ?? 0);
+      await recordRefund(supabase, refund.id, refund.amount ?? 0);
       return;
     }
 
@@ -94,7 +96,7 @@ async function handleEvent(stripe: Stripe, event: Stripe.Event): Promise<void> {
   }
 }
 
-export async function POST(request: Request) {
+export const POST = withSupabase({ auth: "none", cors: false }, async (request, ctx) => {
   const stripe = getStripe();
   const signature = request.headers.get("stripe-signature");
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -112,16 +114,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid Stripe webhook signature." }, { status: 400 });
   }
 
-  if (await hasProcessedEvent(event.id)) {
+  if (await hasProcessedEvent(ctx.supabaseAdmin, event.id)) {
     return NextResponse.json({ received: true, duplicate: true });
   }
 
   try {
-    await handleEvent(stripe, event);
-    await markProcessedEvent(event.id);
+    await handleEvent(ctx.supabaseAdmin, stripe, event);
+    await markProcessedEvent(ctx.supabaseAdmin, event.id);
     return NextResponse.json({ received: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Webhook processing failed.";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+});

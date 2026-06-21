@@ -9,6 +9,7 @@
     "lint": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/server": "^1.1.0",
     "@supabase/supabase-js": "^2.105.4",
     "next": "^16.2.6",
     "react": "latest",

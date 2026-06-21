@@ -58,7 +58,8 @@ export function DonationProgress({ compact = false }: DonationProgressProps) {
     );
   }
 
-  const percent = Math.min(100, Math.round((summary.totalRaisedCents / summary.annualGoalCents) * 100));
+  const hasGoal = summary.annualGoalCents > 0;
+  const percent = hasGoal ? Math.min(100, Math.round((summary.totalRaisedCents / summary.annualGoalCents) * 100)) : 0;
 
   return (
     <section className={compact ? "progress-panel compact" : "progress-panel"}>
@@ -67,13 +68,15 @@ export function DonationProgress({ compact = false }: DonationProgressProps) {
           <p className="eyebrow">Impact Fund tracker</p>
           <h3>{formatCurrency(summary.totalRaisedCents)} raised</h3>
         </div>
-        <strong>{percent}%</strong>
+        <strong>{hasGoal ? `${percent}%` : "Live"}</strong>
       </div>
-      <div className="progress-track" aria-label={`${percent}% of annual goal funded`}>
-        <span style={{ width: `${percent}%` }} />
-      </div>
+      {hasGoal && (
+        <div className="progress-track" aria-label={`${percent}% of annual goal funded`}>
+          <span style={{ width: `${percent}%` }} />
+        </div>
+      )}
       <div className="progress-meta">
-        <span>Goal: {formatCurrency(summary.annualGoalCents)}</span>
+        <span>{hasGoal ? `Goal: ${formatCurrency(summary.annualGoalCents)}` : "Annual goal not set"}</span>
         <span>{summary.monthlyDonorCount} monthly donors</span>
         <span>{summary.lastUpdated ? `Updated ${new Date(summary.lastUpdated).toLocaleDateString()}` : "Live tracker initializing"}</span>
       </div>
