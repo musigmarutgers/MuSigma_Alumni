@@ -197,29 +197,33 @@ export const newsletterIssues = [
 
 export const boardMembers = [
   {
-    name: "Association President",
+    name: "Brian Buonauro",
     role: "President",
+    image: "/executive-board/brian-buonauro.png",
     contactHref: "/about#contact",
     contactLabel: "Contact through governance page",
     bio: "Leads alumni association priorities, board coordination, and the public message to alumni."
   },
   {
-    name: "Alumni Engagement Lead",
+    name: "Awab Hassan",
     role: "Vice President",
+    image: "/executive-board/awab-hassan.png",
     contactHref: "/alumni#join-network",
     contactLabel: "Join the alumni network",
     bio: "Coordinates alumni connection, event follow-up, and paths for graduates who want to stay involved."
   },
   {
-    name: "Finance Stewardship Lead",
+    name: "Cameron Jacoby",
     role: "Treasurer",
+    image: "/executive-board/cameron-jacoby.png",
     contactHref: "/finance",
     contactLabel: "View finance overview",
     bio: "Maintains donation reporting discipline, public finance summaries, and stewardship practices."
   },
   {
-    name: "Communications Lead",
+    name: "Jack Baker",
     role: "Secretary",
+    image: "/executive-board/jack-baker.png",
     contactHref: "/newsletter#signup",
     contactLabel: "Follow newsletter updates",
     bio: "Keeps records, newsletters, and public updates organized for alumni and chapter stakeholders."

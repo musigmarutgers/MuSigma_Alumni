@@ -912,6 +912,7 @@ main {
 .profile-card img {
   width: 132px;
   height: 132px;
+  object-fit: cover;
   margin-bottom: 1rem;
   border-radius: 50%;
 }

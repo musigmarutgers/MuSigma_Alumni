@@ -27,7 +27,7 @@ export default function ExecutiveBoardPage() {
         <div className="board-grid">
           {boardMembers.map((member) => (
             <article className="content-card profile-card" key={member.role}>
-              <Image src="/leader-placeholder.svg" alt="" width={180} height={180} />
+              <Image src={member.image} alt={`${member.name}, ${member.role}`} width={180} height={180} />
               <p className="eyebrow">{member.role}</p>
               <h3>{member.name}</h3>
               <p>{member.bio}</p>
